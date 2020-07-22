@@ -1,0 +1,25 @@
+{
+  "name": "employeetracker",
+  "version": "1.0.0",
+  "description": "Use to manage employees and view data",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Beki-G/employeeTracker.git"
+  },
+  "author": "Beki-G",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Beki-G/employeeTracker/issues"
+  },
+  "homepage": "https://github.com/Beki-G/employeeTracker#readme",
+  "dependencies": {
+    "dotenv": "^8.2.0",
+    "inquirer": "^7.3.2",
+    "mysql": "^2.18.1"
+  }
+}
