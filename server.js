@@ -26,6 +26,44 @@ const connection ={
 //Initiate database connection
 sqlDatabase = new Database(connection);
 
+const initialQuestion = [{
+  name:"actionByUser",
+  message:"What would you like to do in you Employee Tracker?",
+  type:"list",
+  choices:["View", "Add", "Update"]
+}]
+
+const viewQuestion = [
+  {
+    name:"viewTable",
+    message:"Which would you like to view?",
+    type:"list",
+    choices:["Employee", "Role", "Department"]
+  }
+]
+
+async function init(){
+  const {actionByUser} = await inquirer.prompt(initialQuestion)
+
+  switch (actionByUser){
+    case "View":
+      const {viewTable} = await inquirer.prompt(viewQuestion);
+      const res = await sqlDatabase.query(querybuilder.readTable(viewTable.toLowerCase()))
+      renderTable(res)
+      init();
+      break;
+    default: 
+      sqlDatabase.close()
+  }
+}
+
+function renderTable(sqlResponse){
+  const newArr= []
+  sqlResponse.forEach(row=>{
+    newArr.push(Object.assign({}, row))
+  })
+  console.log(newArr)
+}
 
 //test functionality by using query
 async function tryAQuery(){
@@ -44,7 +82,4 @@ async function tryAQuery(){
   console.log(finalArr)
 }
 
-tryAQuery();
-
-//terminate database connection
-sqlDatabase.close();
+init();
