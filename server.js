@@ -31,6 +31,8 @@ sqlDatabase = new Database(connection);
 async function tryAQuery(){
   const finalArr=[];
 
+  sqlDatabase.query(querybuilder.updateEmployeeRole("4", "1"))
+
   const res =await sqlDatabase.query(querybuilder.readTable("employee"))
   
   //console.log(querybuilder.createDepartment("customerservice"))
