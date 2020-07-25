@@ -1,7 +1,8 @@
 const mysql = require("mysql");
 const dotenv = require("dotenv");
 const inquirer = require("inquirer");
-const Database = require("./lib/Database")
+const Database = require("./lib/Database");
+const querybuilder = require("./lib/querybuilder");
 
 //set password to mySQL DB
 dotenv.config();
@@ -29,8 +30,11 @@ sqlDatabase = new Database(connection);
 //test functionality by using query
 async function tryAQuery(){
   const finalArr=[];
-  const res = await sqlDatabase.query(`SELECT * FROM employee`)
-  //map an array from db response
+
+  const res =await sqlDatabase.query(querybuilder.readTable("employee"))
+  
+  //console.log(querybuilder.createDepartment("customerservice"))
+  // map an array from db response
   res.map(row=>{
       finalArr.push(Object.assign({}, row));
   })
