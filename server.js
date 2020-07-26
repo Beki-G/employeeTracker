@@ -1,4 +1,3 @@
-const mysql = require("mysql");
 const dotenv = require("dotenv");
 const inquirer = require("inquirer");
 const Database = require("./lib/Database");
@@ -38,7 +37,7 @@ const viewQuestion = [
     name:"viewTable",
     message:"Which would you like to view?",
     type:"list",
-    choices:["Employee", "Role", "Department"]
+    choices:[`Employee`, "Role", "Department"]
   }
 ]
 
@@ -48,10 +47,15 @@ async function init(){
   switch (actionByUser){
     case "View":
       const {viewTable} = await inquirer.prompt(viewQuestion);
-      const res = await sqlDatabase.query(querybuilder.readTable(viewTable.toLowerCase()))
-      renderTable(res)
+      try{
+        const res = await sqlDatabase.query(querybuilder.readTable(viewTable.toLowerCase()))
+        renderTable(res)
+      } catch (err){
+        console.log(err)
+        return;
+      }
       init();
-      break;
+      break;;
     default: 
       sqlDatabase.close()
   }
@@ -66,20 +70,20 @@ function renderTable(sqlResponse){
 }
 
 //test functionality by using query
-async function tryAQuery(){
-  const finalArr=[];
+// async function tryAQuery(){
+//   const finalArr=[];
 
-  sqlDatabase.query(querybuilder.updateEmployeeRole("4", "1"))
+//   sqlDatabase.query(querybuilder.updateEmployeeRole("4", "1"))
 
-  const res =await sqlDatabase.query(querybuilder.readTable("employee"))
+//   const res =await sqlDatabase.query(querybuilder.readTable("employee"))
   
-  //console.log(querybuilder.createDepartment("customerservice"))
-  // map an array from db response
-  res.map(row=>{
-      finalArr.push(Object.assign({}, row));
-  })
-  //if it works a an array of objects will be console logged
-  console.log(finalArr)
-}
+//   //console.log(querybuilder.createDepartment("customerservice"))
+//   // map an array from db response
+//   res.map(row=>{
+//       finalArr.push(Object.assign({}, row));
+//   })
+//   //if it works a an array of objects will be console logged
+//   console.log(finalArr)
+// }
 
 init();
