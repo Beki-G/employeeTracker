@@ -46,9 +46,10 @@ async function init(){
     case "Add":
       const {createType} = await inquirer.prompt(inquirerQuestions.createQuestion());
       const response = await inquirer.prompt(inquirerQuestions.createTypeQ(createType))
-      console.log(response)
       try {
-        //future query to SQL DB
+        await sqlDatabase.query(querybuilder.createSQLbyType(createType), querybuilder.createArgsByType(createType, response))
+        const res = await sqlDatabase.query(querybuilder.readTable(createType.toLowerCase()));
+        renderTable(res);
       } catch (error) {
         console.log(error)
         sqlDatabase.close();
