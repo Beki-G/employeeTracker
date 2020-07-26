@@ -2,7 +2,8 @@ const dotenv = require("dotenv");
 const inquirer = require("inquirer");
 const Database = require("./lib/Database");
 const querybuilder = require("./lib/querybuilder");
-const cTable = require("console.table")
+const cTable = require("console.table");
+const inquirerQuestions = require("./lib/inquirerQuestions");
 
 //set password to mySQL DB
 dotenv.config();
@@ -26,34 +27,18 @@ const connection ={
 //Initiate database connection
 sqlDatabase = new Database(connection);
 
-const initialQuestion = [{
-  name:"actionByUser",
-  message:"What would you like to do in you Employee Tracker?",
-  type:"list",
-  choices:["View", "Add", "Update"]
-}]
-
-const viewQuestion = [
-  {
-    name:"viewTable",
-    message:"Which would you like to view?",
-    type:"list",
-    choices:[`Employee`, "Role", "Department"]
-  }
-]
 
 async function init(){
-  const {actionByUser} = await inquirer.prompt(initialQuestion)
+  const {actionByUser} = await inquirer.prompt(inquirerQuestions.initialQuestion())
 
   switch (actionByUser){
     case "View":
-      const {viewTable} = await inquirer.prompt(viewQuestion);
+      const {viewTable} = await inquirer.prompt(inquirerQuestions.viewQuestion());
       try{
         const res = await sqlDatabase.query(querybuilder.readTable(viewTable.toLowerCase()))
         renderTable(res)
       } catch (err){
         console.log(err)
-        sqlDatabase.close();
         return;
       }
       init();
