@@ -43,6 +43,20 @@ async function init(){
       }
       init();
       break;
+    case "Add":
+      const {createType} = await inquirer.prompt(inquirerQuestions.createQuestion());
+      const response = await inquirer.prompt(inquirerQuestions.createTypeQ(createType))
+      console.log(response)
+      try {
+        //future query to SQL DB
+      } catch (error) {
+        console.log(error)
+        sqlDatabase.close();
+        return;
+      }
+      
+      init();
+      break;
     default: 
       sqlDatabase.close()
   }
