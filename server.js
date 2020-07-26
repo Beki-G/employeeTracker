@@ -2,6 +2,7 @@ const dotenv = require("dotenv");
 const inquirer = require("inquirer");
 const Database = require("./lib/Database");
 const querybuilder = require("./lib/querybuilder");
+const cTable = require("console.table")
 
 //set password to mySQL DB
 dotenv.config();
@@ -55,7 +56,7 @@ async function init(){
         return;
       }
       init();
-      break;;
+      break;
     default: 
       sqlDatabase.close()
   }
@@ -66,7 +67,7 @@ function renderTable(sqlResponse){
   sqlResponse.forEach(row=>{
     newArr.push(Object.assign({}, row))
   })
-  console.log(newArr)
+  console.table(newArr)
 }
 
 //test functionality by using query
