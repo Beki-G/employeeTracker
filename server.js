@@ -53,6 +53,7 @@ async function init(){
         renderTable(res)
       } catch (err){
         console.log(err)
+        sqlDatabase.close();
         return;
       }
       init();
