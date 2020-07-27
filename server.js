@@ -52,15 +52,79 @@ async function init(){
         renderTable(res);
       } catch (error) {
         console.log(error)
-        sqlDatabase.close();
         return;
       }
       
       init();
       break;
+    case "Update":
+      const staff = await sqlDatabase.query(querybuilder.getStaff())
+
+      const employee = getTableFromData(staff)
+
+      let {updateEmployee, updateType} = await inquirer.prompt(inquirerQuestions.updateQuestion(employee))
+
+      if(updateType === "Employee Role"){
+        await updateEmployeeRole(updateEmployee)
+      }else{
+        //options = await updateEmployeeManager(updateEmployee, updateType)
+      }
+      sqlDatabase2.close()
+
+      init();
+      break;
     default: 
       sqlDatabase.close()
   }
+}
+
+async function updateEmployeeRole(employee){
+  //create new connection 
+  sqlDatabase2 = new Database(connection);
+
+  //get all current roles___________________
+  let sql = querybuilder.getRoleTable();
+
+  const option = await sqlDatabase2.query(sql)
+
+  const newArr = []
+  //parse data
+  option.forEach(row=>{
+    newArr.push(row.Title)
+  })
+  //ask user to what they would like to update
+  const {updateColumn} = await inquirer.prompt(inquirerQuestions.updateByType(newArr))
+  //split name into two arguments--(avoid if two people have the first name)
+  nameArgs = querybuilder.updateEmployeeArgs(employee);
+
+  //get array of sql queries
+  const roleArr= querybuilder.updateEmployee("Employee Role")
+
+  //query the database for role id
+  const roleID = await sqlDatabase2.query(roleArr[0],[updateColumn]);
+
+  //parse data
+  const args = [roleID[0].role_id]
+  //into a single arr role id & name arguments
+  args.push(...nameArgs)
+
+  //query db to update employee record
+  await sqlDatabase2.query(roleArr[1], args)
+
+  //get updated employee table & render
+  const finalQuery = await sqlDatabase2.query(querybuilder.readTable("employee"))
+
+  renderTable(finalQuery)
+
+  return " "
+}
+
+function getTableFromData(arr){
+  const newArr= []
+  arr.forEach(row=>{
+    newArr.push(row.Staff)
+  })
+  return newArr
 }
 
 function renderTable(sqlResponse){
