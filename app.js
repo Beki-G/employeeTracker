@@ -123,9 +123,7 @@ async function updateEmployeeManager(employee){
   sqlDatabase2 = new Database(connection);
 
   //get all current managers
-  let sql = querybuilder.getCurrentManagers();
-
-  const option = await sqlDatabase2.query(sql)
+  const option = await sqlDatabase2.query(querybuilder.getCurrentManagers())
 
   const newArr = []
   //parse data
@@ -174,22 +172,5 @@ function renderTable(sqlResponse){
   })
   console.table(newArr)
 }
-
-//test functionality by using query
-// async function tryAQuery(){
-//   const finalArr=[];
-
-//   sqlDatabase.query(querybuilder.updateEmployeeRole("4", "1"))
-
-//   const res =await sqlDatabase.query(querybuilder.readTable("employee"))
-  
-//   //console.log(querybuilder.createDepartment("customerservice"))
-//   // map an array from db response
-//   res.map(row=>{
-//       finalArr.push(Object.assign({}, row));
-//   })
-//   //if it works a an array of objects will be console logged
-//   console.log(finalArr)
-// }
 
 init();
