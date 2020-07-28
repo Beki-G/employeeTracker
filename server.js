@@ -67,7 +67,7 @@ async function init(){
       if(updateType === "Employee Role"){
         await updateEmployeeRole(updateEmployee)
       }else{
-        //options = await updateEmployeeManager(updateEmployee, updateType)
+        await updateEmployeeManager(updateEmployee)
       }
       sqlDatabase2.close()
 
@@ -116,7 +116,47 @@ async function updateEmployeeRole(employee){
 
   renderTable(finalQuery)
 
-  return " "
+}
+
+async function updateEmployeeManager(employee){
+  //create new connection 
+  sqlDatabase2 = new Database(connection);
+
+  //get all current managers
+  let sql = querybuilder.getCurrentManagers();
+
+  const option = await sqlDatabase2.query(sql)
+
+  const newArr = []
+  //parse data
+  option.forEach(row=>{
+    newArr.push(row.Manager)
+  })
+  //ask user to what they would like to update
+  const {updateColumn} = await inquirer.prompt(inquirerQuestions.updateByType(newArr))
+  //split name into two arguments--(avoid if two people have the first name)
+  console.log("Employee: ", employee)
+  nameArgs = querybuilder.updateEmployeeArgs(employee);
+  managerNameArgs = querybuilder.updateEmployeeArgs(updateColumn)
+
+  //get array of current manager 
+  const managerArr= querybuilder.updateEmployee("Employee Manager")
+
+  //query the database for manager id
+  const managerID = await sqlDatabase2.query(managerArr[0],managerNameArgs);
+
+  //parse data
+  const args = [managerID[0].emp_id]
+  //into a single arr manager id & name arguments
+  args.push(...nameArgs)
+
+  //query db to update employee record
+  await sqlDatabase2.query(managerArr[1], args)
+
+  //get updated employee table & render
+  const finalQuery = await sqlDatabase2.query(querybuilder.readTable("employee"))
+
+  renderTable(finalQuery)
 }
 
 function getTableFromData(arr){
